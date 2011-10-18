@@ -1,7 +1,6 @@
 require 'minitest/autorun'
 
-require File.join( File.dirname(__FILE__), '..', 'lib', 'farmer_john', "dm_extension")
-require File.join( File.dirname(__FILE__), '..', 'lib', 'farmer_john', "planter")
+require File.join( File.dirname(__FILE__), '..', 'lib', 'farmer_john.rb')
 
 require 'rubygems'
 
@@ -13,13 +12,38 @@ describe "farmer_john" do
     end
 
     it "should create a model if one doesn't exist" do
-      Post.plant([
+      Post.plant(
         {:title => 'First Post', :body => 'This is a sample.'}
+      )
+
+      post = Post.get(1)
+      post.title.must_equal 'First Post'
+      post.body.must_equal 'This is a sample.'
+    end
+    
+    it 'should respond to seed' do
+      Post.seed(
+        {:title => 'First Post', :body => 'This is a sample.'}
+      )
+
+      post = Post.get(1)
+      post.title.must_equal 'First Post'
+      post.body.must_equal 'This is a sample.'
+    end
+    
+    it 'should accept an array of hashes' do
+      Post.plant([
+        {:title => 'First Post', :body => 'This is a sample.'},
+        {:title => 'Second Post', :body => 'Another sample'}
       ])
 
       post = Post.get(1)
       post.title.must_equal 'First Post'
       post.body.must_equal 'This is a sample.'
+      
+      post2 = Post.get(2)
+      post2.title.must_equal 'Second Post'
+      post2.body.must_equal 'Another sample'
     end
     
     it 'should raise an exception if validation fails' do
