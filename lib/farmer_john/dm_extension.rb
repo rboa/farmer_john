@@ -4,19 +4,22 @@ module DataMapper
   module Model
     def plant(seeds)
       if seeds.is_a?(Hash)
-        FarmerJohn::Planter.plant(self, seeds)
-        return
+        return FarmerJohn::Planter.plant(self, seeds)
       end
       
+      arr = []
       seeds.to_a.each do |seed|
-        FarmerJohn::Planter.plant(self, seed)
+        arr.push(FarmerJohn::Planter.plant(self, seed))
       end
+      return arr
     end
     
     alias :seed :plant
     
-    def column_names
-      properties.map {|i| i.field}
+    def accepted_properties
+      repository = self.repository_name
+      list = properties(repository) + relationships(repository)
+      return list.map {|i| i.field}
     end
   end
 end
