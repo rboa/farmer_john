@@ -1,14 +1,10 @@
-require 'minitest/autorun'
-
-require File.join( File.dirname(__FILE__), '..', 'lib', 'farmer_john.rb')
-
-require 'rubygems'
+require File.expand_path('../helper', __FILE__)
 
 describe "farmer_john" do
   
   describe "datamapper" do  
     before(:each) do
-      load File.join( File.dirname(__FILE__), "models", "dm_post.rb")
+      Post.all.destroy
     end
 
     it "should create a model if one doesn't exist" do
@@ -16,7 +12,7 @@ describe "farmer_john" do
         {:title => 'First Post', :body => 'This is a sample.'}
       )
 
-      post = Post.get(1)
+      post = Post.first
       post.title.must_equal 'First Post'
       post.body.must_equal 'This is a sample.'
     end
@@ -25,8 +21,8 @@ describe "farmer_john" do
       Post.seed(
         {:title => 'First Post', :body => 'This is a sample.'}
       )
-
-      post = Post.get(1)
+      
+      post = Post.first
       post.title.must_equal 'First Post'
       post.body.must_equal 'This is a sample.'
     end
@@ -36,12 +32,12 @@ describe "farmer_john" do
         {:title => 'First Post', :body => 'This is a sample.'},
         {:title => 'Second Post', :body => 'Another sample'}
       ])
-
-      post = Post.get(1)
+    
+      post = Post.all[0]
       post.title.must_equal 'First Post'
       post.body.must_equal 'This is a sample.'
       
-      post2 = Post.get(2)
+      post2 = Post.all[1]
       post2.title.must_equal 'Second Post'
       post2.body.must_equal 'Another sample'
     end
