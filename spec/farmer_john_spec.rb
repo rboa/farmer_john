@@ -45,5 +45,36 @@ describe "farmer_john" do
     it 'should raise an exception if validation fails' do
       lambda { Post.plant([{:body => 'This post should fail'}]) }.must_raise(ArgumentError)
     end
+    
+    it 'should accept one constraint' do
+      Post.constrain(:title).plant([
+        {:title => 'First', :body => 'Test'},
+        {:title => 'First', :body => 'Another test'}
+      ])
+      
+      p = Post.all
+      post = p[0]
+      
+      p.length.must_equal 1
+      post.title.must_equal 'First'
+      post.body.must_equal 'Another test'
+    end
+    
+    it 'should accept multiple constraints' do
+      Post.constrain(:title, :body).plant([
+        {:title => 'First', :body => 'Test'},
+        {:title => 'First', :body => 'Another test'}
+      ])
+      
+      p = Post.all
+      post = p[0]
+      post2 = p[1]
+      
+      p.length.must_equal 2
+      post.title.must_equal 'First'
+      post.body.must_equal 'Test'
+      post2.title.must_equal 'First'
+      post2.body.must_equal 'Another test'
+    end
   end
 end
