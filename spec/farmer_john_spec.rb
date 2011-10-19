@@ -76,5 +76,9 @@ describe "farmer_john" do
       post2.title.must_equal 'First'
       post2.body.must_equal 'Another test'
     end
+    
+    it 'should raise error if invalid constraints present' do
+      lambda { Post.constrain(:fail) }.must_raise(ArgumentError)
+    end
   end
 end
