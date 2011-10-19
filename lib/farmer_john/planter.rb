@@ -20,6 +20,10 @@ module FarmerJohn
         hash.each_pair do |key, value|
           next unless valid_key?(key)
           
+          if value.is_a?(Array)
+            value = value.last
+          end
+          
           record.send("#{key}=", value)
         end
         record.save || raise(ArgumentError, "Validation failed: #{record.errors.inspect}")
@@ -47,7 +51,7 @@ module FarmerJohn
       @constraints.each do |c|
         constraint_data[c] = data[c]
       end
-            
+      
       return @model_name.first(constraint_data) || @model_name.new
     end
     

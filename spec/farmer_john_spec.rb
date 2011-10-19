@@ -80,5 +80,26 @@ describe "farmer_john" do
     it 'should raise error if invalid constraints present' do
       lambda { Post.constrain(:fail) }.must_raise(ArgumentError)
     end
+    
+    it 'should allow arrays to be passed for fields' do
+      Post.plant({:title => ['First', 'Second'], :body => 'Test'})
+      
+      p = Post.all[0]
+      p.title.must_equal 'Second'
+      p.body.must_equal 'Test'
+    end
+    
+    it 'should use proper values when constraining arrays' do
+      Post.constrain(:title).plant([
+        {:title => 'First'},
+        {:title => ['First', 'Second']}
+      ])
+      
+      p = Post.all
+      post = p[0]
+      
+      p.length.must_equal 1
+      post.title.must_equal 'Second'
+    end
   end
 end
