@@ -1,13 +1,21 @@
 module FarmerJohn
   class Planter
-    def initialize(model_name, constraints = nil)
+    def initialize(model_name, defaults = nil, constraints = nil)
       @model_name = model_name
       @constraints = constraints.nil? ? [] : constraints.to_a
+      @defaults = (defaults.nil? || !defaults.is_a?(Hash)) ? {} : defaults
       
       validate_constraints
     end
     
-    def plant(data)
+    def plant(*args)
+      name = :default
+      data = {}
+      args.each do |param|
+        name = param if param.is_a?(Symbol)
+        data = param if param.is_a?(Hash) || param.is_a?(Array)
+      end
+      
       records = []
       
       if data.is_a?(Hash)
@@ -15,9 +23,10 @@ module FarmerJohn
       end
       
       data.each do |hash|
-        record = find_or_create_record(hash)
+        values = @defaults[name].is_a?(Hash) ? @defaults[name].merge(hash) : hash
+        record = find_or_create_record(values)
         records.delete(record)
-        hash.each_pair do |key, value|
+        values.each_pair do |key, value|
           next unless valid_key?(key)
           
           if value.is_a?(Array)
@@ -33,6 +42,8 @@ module FarmerJohn
             
       return records
     end
+    
+    alias :seed :plant
     
     private
     

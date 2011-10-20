@@ -5,6 +5,7 @@ describe "farmer_john" do
   describe "datamapper" do  
     before(:each) do
       Post.all.destroy
+      Post.define({})
     end
 
     it "should create a model if one doesn't exist" do
@@ -100,6 +101,48 @@ describe "farmer_john" do
       
       p.length.must_equal 1
       post.title.must_equal 'Second'
+    end
+    
+    it 'should allow seed definitions' do
+      Post.define({
+        :title => 'Default'
+      })
+
+      Post.seed
+
+      Post.define(:bryan, {
+        :title => 'Bryan'
+      })
+
+      Post.seed(:bryan)
+      
+      p = Post.all
+      post = p[0]
+      post2 = p[1]
+      
+      p.length.must_equal 2
+      post.title.must_equal 'Default'
+      post2.title.must_equal 'Bryan'
+    end
+    
+    it 'should use given values over definitions' do
+      Post.define({
+        :title => 'Default'
+      })
+
+      Post.seed([
+        {:body => 'Foo'},
+        {:title => 'Modified'}
+      ])
+      
+      p = Post.all
+      post = p[0]
+      post2 = p[1]
+      
+      p.length.must_equal 2
+      post.title.must_equal 'Default'
+      post.body.must_equal 'Foo'
+      post2.title.must_equal 'Modified'
     end
   end
 end
