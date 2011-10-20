@@ -58,12 +58,48 @@ module FarmerJohn
     def find_or_create_record(data)
       return @model_name.new if @constraints.empty?
       
+      found_object = nil
       constraint_data = {}
+      multi_constraints = {}
       @constraints.each do |c|
-        constraint_data[c] = data[c]
+        if data[c].is_a?(Array)
+          multi_constraints[c] = data[c]
+        else
+          constraint_data[c] = data[c]
+        end
+      end
+      objects = @model_name.all(constraint_data)
+      return @model_name.new unless objects
+      
+      unless multi_constraints.keys.empty?
+        peg = {}
+        multi_constraints.each do |key, value|
+          peg[value] = [value.length - 1, key]
+        end
+
+        nperms= 1
+        multi_constraints.each_value { |a| nperms  *=  a.length }
+      
+        nperms.times do |p|
+          permutation = {}
+          multi_constraints.each_value do |a|
+            permutation.store(peg[a][1], a[peg[a][0]])
+          end
+          
+          found_object = objects.first(permutation)
+          return found_object unless found_object.nil?
+
+          multi_constraints.each_value do |a|
+            peg[a][0] -= 1
+            break  if peg[a][0] >= 0
+            peg[a][0] = a.length - 1
+          end
+        end
+      else
+        found_object = objects.first
       end
       
-      return @model_name.first(constraint_data) || @model_name.new
+      return found_object || @model_name.new
     end
     
     def validate_constraints

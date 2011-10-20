@@ -103,6 +103,20 @@ describe "farmer_john" do
       post.title.must_equal 'Second'
     end
     
+    it 'should use proper values when constraining multiple versioned seeds' do
+      Post.constrain(:title, :body).plant([
+        {:title => 'First', :body => 'Foo'},
+        {:title => ['First', 'Second'], :body => ['Foo', 'Boo']}
+      ])
+      
+      p = Post.all
+      post = p[0]
+      
+      p.length.must_equal 1
+      post.title.must_equal 'Second'
+      post.body.must_equal 'Boo'
+    end
+    
     it 'should allow seed definitions' do
       Post.define({
         :title => 'Default'
