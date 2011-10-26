@@ -1,5 +1,22 @@
 module FarmerJohn
   class Planter
+    def self.plant_seeds(models)
+      models.each do |model, seeds|
+        seeds.each do |seed|
+          puts "index:#{FarmerJohn::Farmer.get_index_for_seed(seed)}"
+          record = find_or_create_record(seed.model, seed.constraints, seed.values)
+          seed.values.each do |key, value|
+            if value.is_a?(Array)
+              value = value.last
+            end
+
+            record.send("#{key}=", value)
+          end
+          record.save || raise(ArgumentError, "Validation failed: #{record.errors.inspect}")
+        end
+      end
+    end
+    
     def initialize(model_name, defaults = nil, constraints = nil)
       @model_name = model_name
       @constraints = constraints.nil? ? [] : constraints.to_a
@@ -55,21 +72,21 @@ module FarmerJohn
       return valid
     end
     
-    def find_or_create_record(data)
-      return @model_name.new if @constraints.empty?
+    def self.find_or_create_record(model, constraints, data)
+      return model.new if constraints.empty?
       
       found_object = nil
       constraint_data = {}
       multi_constraints = {}
-      @constraints.each do |c|
+      constraints.each do |c|
         if data[c].is_a?(Array)
           multi_constraints[c] = data[c]
         else
           constraint_data[c] = data[c]
         end
       end
-      objects = @model_name.all(constraint_data)
-      return @model_name.new unless objects
+      objects = model.all(constraint_data)
+      return model.new unless objects
       
       unless multi_constraints.keys.empty?
         peg = {}
@@ -99,7 +116,7 @@ module FarmerJohn
         found_object = objects.first
       end
       
-      return found_object || @model_name.new
+      return found_object || model.new
     end
     
     def validate_constraints

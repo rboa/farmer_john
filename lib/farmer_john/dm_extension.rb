@@ -3,16 +3,17 @@ require 'dm-core'
 module DataMapper
   module Model
     def define(name = :default, values)
-      @defaults = {} if @defaults.nil?
-      @defaults[name] = values
+      FarmerJohn::Farmer.assign_defaults(self, name, values)
     end
     
     def constrain(*fields)
-      return FarmerJohn::Planter.new(self, @defaults, fields)
+      @constraints = fields
+      return self
     end
     
     def plant(*args)
-      return FarmerJohn::Planter.new(self, @defaults).plant(*args)
+      FarmerJohn::Farmer.create_seeds(self, @constraints, *args)
+      @constraints = nil
     end
     
     alias :seed :plant

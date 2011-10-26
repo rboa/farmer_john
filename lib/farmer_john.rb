@@ -4,6 +4,7 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 require 'farmer_john/dm_extension'
 require 'farmer_john/planter'
 require 'farmer_john/farmer'
+require 'farmer_john/seed'
 
 # Helper Methods
 
