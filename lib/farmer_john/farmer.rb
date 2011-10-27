@@ -6,9 +6,7 @@ module FarmerJohn
       if name
         @@datasets[name.to_sym] = block
       else  # add the dataset to the unnamed datasets
-        # @@datasets[:_] ||= []
         @@datasets["_#{@@datasets.length}".to_sym] = block
-        # @@datasets[:_] << block
       end
     end
     
@@ -17,10 +15,6 @@ module FarmerJohn
         self.load_dataset(name)
       end
     end
-    
-    # def self.load_unnamed_datasets
-    #   self.load_dataset(:_)
-    # end
     
     def self.load_dataset(name)
       return unless dataset = @@datasets[name]
