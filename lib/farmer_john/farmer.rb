@@ -70,5 +70,13 @@ module FarmerJohn
       @@defaults[self.current_dataset] ||= {}
       @@defaults[self.current_dataset][model] ||= {}
     end
+    
+    def self.seed_of_type_with_index(type, i)
+      @@seeds[self.current_dataset][type][i]
+    end
+    
+    def self.index_for_seed(seed)
+      @@seeds[self.current_dataset][seed.class.name.to_sym].index seed
+    end
   end
 end
