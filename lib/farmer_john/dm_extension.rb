@@ -2,6 +2,7 @@ require 'dm-core'
 
 module DataMapper
   module Model
+    #TODO: fix for 1.8.7 and test more
     def define(name = :default, values)
       FarmerJohn::Farmer.assign_defaults(self, name, values)
     end
