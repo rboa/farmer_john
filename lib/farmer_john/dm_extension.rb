@@ -12,8 +12,9 @@ module DataMapper
     end
     
     def plant(*args)
-      FarmerJohn::Farmer.create_seeds(self, @constraints, *args)
+      results = FarmerJohn::Farmer.create_seeds(self, @constraints, *args)
       @constraints = nil
+      return results
     end
     
     alias :seed :plant
@@ -26,10 +27,8 @@ module DataMapper
       return relationships(self.repository_name).map {|i| i.field}
     end
     
-    def complete_properties
-      repository = self.repository_name
-      list = properties(repository) + relationships(repository)
-      return list.map {|i| i.field}
+    def child_model_index
+      return Hash[relationships(self.repository_name).map {|i| [i.field.to_sym, i.child_model]}]
     end
   end
 end

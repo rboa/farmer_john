@@ -4,4 +4,6 @@ class Post
   property :id,     Serial
   property :title,  String, :required => true
   property :body,   String
+  
+  has n, :comments
 end

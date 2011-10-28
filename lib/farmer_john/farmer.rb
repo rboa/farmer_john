@@ -21,7 +21,7 @@ module FarmerJohn
       
       @@current_dataset = name
       dataset.call
-      
+                  
       Planter.plant_seeds(@@seeds[self.current_dataset])
       
       @@current_dataset = nil
@@ -45,20 +45,33 @@ module FarmerJohn
     def self.create_seeds(model, constraints, *args)
       setup_defaults(model)
       defn = :default
-      data = {}
+      data = [{}]
       args.each do |param|
         defn = param if param.is_a?(Symbol)
         data = param if param.is_a?(Array)
         data = [param] if param.is_a?(Hash)
       end
+                  
+      results = []
       
       @@seeds ||= {}
       @@seeds[self.current_dataset] ||= {}
       @@seeds[self.current_dataset][model] ||= []
       data.each do |hash|
         values = @@defaults[self.current_dataset][model][defn].is_a?(Hash) ? @@defaults[self.current_dataset][model][defn].merge(hash) : hash
-        @@seeds[self.current_dataset][model].push(FarmerJohn::Seed.new(model, values, constraints))
+        seed = FarmerJohn::Seed.new(model, values, constraints)
+        seed.values.each do |key, value|
+          next unless seed.model.defined_relationships.include?(key.to_s)
+          value.flatten.each do |child_seed|
+            next if child_seed.is_a?(Integer)
+            remove_seed(child_seed)
+          end
+        end
+        @@seeds[self.current_dataset][model].push(seed)
+        results.push(seed)
       end
+      
+      return results.length == 1 ? results[0] : results
     end
     
     def self.get_index_for_seed(seed)
@@ -77,6 +90,10 @@ module FarmerJohn
     
     def self.index_for_seed(seed)
       @@seeds[self.current_dataset][seed.class.name.to_sym].index seed
+    end
+    
+    def self.remove_seed(seed)
+      @@seeds[self.current_dataset][seed.model].delete(seed)
     end
   end
 end

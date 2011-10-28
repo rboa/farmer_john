@@ -10,6 +10,7 @@ require File.expand_path('../../lib/farmer_john', __FILE__)
 
 # Models
 require File.expand_path('../models/dm_post', __FILE__)
+require File.expand_path('../models/dm_comment', __FILE__)
 
 # setup repository
 DataMapper.setup(:default, "sqlite3::memory:")
