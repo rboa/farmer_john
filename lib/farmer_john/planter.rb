@@ -49,7 +49,7 @@ module FarmerJohn
         type = :property
       elsif (model.defined_relationships.include?(key.to_s))
         type = :assoc
-      elsif model.instance_methods.include?("#{key}=")
+      elsif model.instance_methods.include?("#{key}=") || model.instance_methods.include?("#{key}=".to_sym)
         type = :property
       end
 
