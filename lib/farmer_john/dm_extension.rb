@@ -12,9 +12,15 @@ module DataMapper
       return self
     end
     
+    def cache(*fields)
+      @cache = fields
+      return self
+    end
+    
     def plant(*args)
-      results = FarmerJohn::Farmer.create_seeds(self, @constraints, *args)
+      results = FarmerJohn::Farmer.create_seeds(self, @constraints, @cache, *args)
       @constraints = nil
+      @cache = nil
       return results
     end
     
