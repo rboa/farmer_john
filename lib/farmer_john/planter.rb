@@ -3,6 +3,8 @@ module FarmerJohn
     def self.plant_seeds(models)
       models.each do |model, seeds|
         seeds.each do |seed|
+          next if seed.nil?
+          
           record = find_or_create_record(seed.model, seed.constraints, seed.values)
           
           populate_values_in_record(record, seed)

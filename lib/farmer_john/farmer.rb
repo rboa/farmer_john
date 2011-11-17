@@ -131,7 +131,8 @@ module FarmerJohn
     end
     
     def self.remove_seed(seed)
-      @@seeds[self.current_dataset][seed.model].delete(seed)
+      i = @@seeds[self.current_dataset][seed.model].index(seed)
+      @@seeds[self.current_dataset][seed.model][i] = nil
     end
   end
 end
