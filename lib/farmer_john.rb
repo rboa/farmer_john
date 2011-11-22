@@ -16,5 +16,9 @@ end
 
 include FarmerJohn
 
+at_exit do
+  FarmerJohn::Farmer.run
+end
+
 # The seed method should create the seed and add it to the current dataset (or
 # the default dataset).
