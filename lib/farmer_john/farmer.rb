@@ -94,6 +94,8 @@ module FarmerJohn
     private
     
     def self.load_all_datasets
+      return unless defined?(@@datasets)
+      
       @@datasets.each_pair do |name, blocks|
         self.load_dataset(name)
       end
