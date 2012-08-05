@@ -4,8 +4,8 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'farmer_john'
   s.version     = version
-  s.summary     = 'TODO'
-  s.description = 'TODO'
+  s.summary     = 'some sample text'
+  s.description = 'some more sample text'
 
   s.required_ruby_version     = '>= 1.8.7'
   s.required_rubygems_version = ">= 1.3.6"
